@@ -7,13 +7,16 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{geometry}
-\usepackage{natbib}
 \usepackage{color}
 \usepackage{booktabs}
 \usepackage{caption}
 \usepackage{subcaption}
-
-\geometry{margin=1in}
+\usepackage{bookmark}
+\usepackage[
+    backend=biber,
+    style=authoryear,
+  ]{biblatex}
+\addbibresource{bibliography.bib}
 
 \title{BART}
 \author{
@@ -38,6 +41,11 @@ Your abstract here.
 %\tableofcontents
 
 \section{Introduction}
-Your introduction here.
+
+Bayesian Regression Additive Trees (BART) were first introduced by \cite{chipmanBARTBayesianAdditive2010}
+
+\newpage
+
+\printbibliography
 
 \end{document}
