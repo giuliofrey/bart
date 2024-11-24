@@ -2,4 +2,3 @@
 paper/*
 !*.tex
 !*.bib
-!*.pdf
