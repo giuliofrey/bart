@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,11pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -16,9 +16,11 @@
     backend=biber,
     style=authoryear,
   ]{biblatex}
+
+
 \addbibresource{bibliography.bib}
 
-\title{BART}
+\title{BART: A Comparison with Non-bayesian Tree Methods}
 \author{
     Vincenzo Dorrello 
     \and
@@ -43,6 +45,53 @@ Your abstract here.
 \section{Introduction}
 
 Bayesian Regression Additive Trees (BART) were first introduced by \cite{chipmanBARTBayesianAdditive2010}
+
+\section{Non-Bayesian Tree Based Methods}
+
+Tree based method are more usefull compared to the linear regression model when the relation to be model is complex or non-linear. Indeed, the standard linear model is defined as:
+\begin{equation}
+  f(X) = \beta_0 + \sum_{j=1}^p X_j \beta_j
+\end{equation}
+Wheras the decision tree model as:
+\begin{equation}
+  f(X) = \sum_{m=1}^M c_m \cdot 1(X \in R_m)
+\end{equation}
+DESCRIBE BETTER THIS EQUATIONS
+
+We take most of our arguments for this section from the \cite[Chapter~8]{jamesIntroductionStatisticalLearning2021}.
+
+\subsection{Regression Trees}
+
+Tree based methods that we cover in this paper are all based on decision trees. Decision trees can be applied both to regression or classification problems, and are thus named accordingly to their application. Regression trees in particular are build in two steps.
+
+First, the prediction space (the set of all possible values of the vector of observables) is split into $J$ regions $R_j$ that are distinct and non-overlapping.  Secondly, a prediction for the outcome variable is made for each observation in each $R_j$ regions, as the mean of the training observations in that same regions.
+
+For a predictor space of $P$ elements the regions are $p$ dimensional boxes, that are build by minimizing the Residual Sum Squared, as the equation \ref{rss_tree} shows.
+\begin{equation}
+  R_1,...,R_j=\operatorname*{argmin}_{R_j}\sum^J_{j=1}\sum_{i\in R_j}\left(y_i-\hat{y}_{r_j}\right)^2
+  \label{rss_tree}
+\end{equation}
+
+Instead of considering all the possible partitions of the predictor space, a top-down approach is used. First, all observations are considered such that they belong to the same region. Then, this process chooses the best split minimizing the RSS irrespective of future outcomes. This is then repeated for a number of times, until a stopping criterion is reached (usually a minimum number of observations in all the regions).
+
+As the regions visualizations are complex when more than 2 regressors are present, a tree based graph is used.
+
+The process described above will likely tend to overfit the data. There are numerous solutions to this, the most simple one being increasing the number of AND GENERALLY THE ENSAMBLING MODELSobservations that rise the stopping rule. A valid alternative is to grow a very large tree, and then reduce it to obtain a smaller subtree. This is known as tree pruning.  
+
+ADD COST COMPLEXITY PRUNING
+
+One of the main disadvantages of this setting, is that trees are non-robust. In fact a small change in the data can lead to a large change in the estimation. This follows from the fact that Regression Trees suffer from high variance. This is indeed quite problematic and the main reason that simple regression trees are not used by practitioners. Ensemble methods aim at solving this issue. Those methods in the context of trees combine simpler models (called weak learners), whichy may lead to mediocre predictions, in a single more powerful and stable model. QUelli di cui sotto sopra abuiao detto sono tutti ensable models.
+
+\subsection{Bagging}
+Bagging is a generic method that aims at reducing the variance of a statistical learning method. Bagging is based on the fact that if we have independent observations $(Z_1,...,Z_n)$ with same variance $\sigma$, then the vairance of the sample mean of the observation will be lower, as it is $V(\bar{Z})=\frac{\sigma}{n}$.
+
+Bagging uses a bootstrap sampling procedure to obtain different samples from the data, and then fits a tree for each of the bootstrapped samples. The single estimates for each sample are then averaged, as equation \ref{eq_bagging} shows. 
+\begin{equation}
+  \label{eq_bagging}
+  \hat{f}_{\text{bag}}(x) = \frac{1}{B} \sum_{b=1}^{B} \hat{f}^{*b}(x).
+\end{equation}
+
+
 
 \newpage
 
