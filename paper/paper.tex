@@ -1,6 +1,7 @@
 \documentclass[a4paper,11pt]{article}
 
 \usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amsmath, amssymb, amsthm}
@@ -10,6 +11,7 @@
 \usepackage{color}
 \usepackage{booktabs}
 \usepackage{caption}
+\usepackage[ruled,vlined]{algorithm2e}
 \usepackage{subcaption}
 \usepackage{bookmark}
 \usepackage[
@@ -90,7 +92,39 @@ Bagging uses a bootstrap sampling procedure to obtain different samples from the
   \label{eq_bagging}
   \hat{f}_{\text{bag}}(x) = \frac{1}{B} \sum_{b=1}^{B} \hat{f}^{*b}(x).
 \end{equation}
+Where B is the number of samples of the bootstrapping procedure.
 
+\subsection{Boosting}
+
+Similar to bagging, boosting is not specific to regression trees, it is rather a generic approach. Said so, it is quite effective when used on trees. In fact ,it approaches the overfitting problem but without using bootstrapping, as bagging does. Boosting relies on fitting trees sequentially, as algorithm \ref{alg_boosting} shows. 
+
+
+\begin{algorithm}
+  \caption{Boosting for Regression Trees}
+  \label{alg_boosting}
+  \SetAlgoLined
+  \DontPrintSemicolon
+  \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+  
+  Set $\hat{f}(x) = 0$ and $r_i = y_i$ for all $i$ in the training set.\;
+  \For{$b = 1, 2, \ldots, B$}{
+      (a) Fit a tree $f^b$ with $d$ splits ($d+1$ terminal nodes) to the training data $(X, r)$.\;
+      (b) Update $\hat{f}$ by adding in a shrunken version of the new tree:
+      \begin{equation}
+      \hat{f}(x) \gets \hat{f}(x) + \lambda f^b(x).
+      \end{equation}\;
+      (c) Update the residuals:
+      \begin{equation}
+      r_i \gets r_i - \lambda f^b(x_i).
+      \end{equation}\;
+  }
+  Output the boosted model:
+  \begin{equation}
+  \hat{f}(x) = \sum_{b=1}^B \lambda f^b(x).
+  \end{equation}\;
+  
+\end{algorithm}
+  
 
 
 \newpage
