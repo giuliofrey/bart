@@ -9,6 +9,8 @@
 \usepackage{hyperref}
 \usepackage{geometry}
 \usepackage{color}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
 \usepackage{booktabs}
 \usepackage{caption}
 \usepackage[ruled,vlined]{algorithm2e}
@@ -92,12 +94,13 @@ Bagging uses a bootstrap sampling procedure to obtain different samples from the
   \label{eq_bagging}
   \hat{f}_{\text{bag}}(x) = \frac{1}{B} \sum_{b=1}^{B} \hat{f}^{*b}(x).
 \end{equation}
-Where B is the number of samples of the bootstrapping procedure.
+Where $B$ is the number of samples of the bootstrapping procedure.
 
 \subsection{Boosting}
 
 Similar to bagging, boosting is not specific to regression trees, it is rather a generic approach. Said so, it is quite effective when used on trees. In fact ,it approaches the overfitting problem but without using bootstrapping, as bagging does. Boosting relies on fitting trees sequentially, as algorithm \ref{alg_boosting} shows. 
 
+The number of sequential trees to fit, as chosen by the parameter $B$ in algorithm  \ref{alg_boosting}, if chosen too large, can cause overfitting. The learning rate $\lambda$ is another tunable parameter. Often small values are chosen ($\lambda=10^{-2}$ or even smaller).
 
 \begin{algorithm}
   \caption{Boosting for Regression Trees}
