@@ -2,3 +2,6 @@
 paper/*
 !*.tex
 !*.bib
+
+#folders
+content/*
