@@ -135,23 +135,31 @@ Abalone are marine snails found in various regions around the world. Determining
 
 We use data Abalone characteristics data coming from the UC Irvine Machine Learning Repository \parencite{warwicknashAbalone1994a}, that is described in table \ref{table1}. No data manipulation is necessary, aside from creating a new variable, \( \text{Age} = \text{Rings} + 1.5 \), and removing the Rings column.
 
- We run BART from \cite{mccullochBARTBayesianAdditive2024}; Boosting from \cite{ridgewayGbmGeneralizedBoosted2024}; Random Forest and Bagging from \cite{breimanRandomForestBreimanCutlers2024}. We use half of the sample to fit $\hat{y}$, that is the Age variable, and half the sample to give us out of bag Mean Squared Errors (MSE) for predicting the same variable. Models are run for various values of TT, and for each value, both the mean squared error (MSE) of out-of-sample predictions (shown in plot \ref{plot_mse}) and the computation time (depicted in plot \ref{plot_time}) are recorded.
-
-
-
 \begin{table}[]
   \centering
   \begin{tabular}{llllll}
 
   \toprule
-  Variable Name & Role & Type & Description & Units & Missing Values\\  
+  Variable Name & Role & Type & Description & Units \\
   \midrule
-   Sex                  & Feature       & Categorical   & M, F, and I (infant) & -             & No                      \\   Length               & Feature       & Continuous    & Longest shell measurement & mm         & No                      \\   Diameter             & Feature       & Continuous    & Perpendicular to length & mm           & No                      \\   Height               & Feature       & Continuous    & With meat in shell      & mm           & No                      \\   Whole\_weight         & Feature       & Continuous    & Whole abalone           & grams        & No                      \\   Shucked\_weight       & Feature       & Continuous    & Weight of meat          & grams        & No                      \\   Viscera\_weight       & Feature       & Continuous    & Gut weight (after bleeding) & grams    & No                      \\   Shell\_weight         & Feature       & Continuous    & After being dried       & grams        & No                      \\   Rings                & Target        & Integer       & +1.5 gives the age in years & -          & No                      \\
+  Sex                  & Feature       & Categorical   & M, F, and I (infant) & -    \\
+  Length               & Feature       & Continuous    & Longest shell measurement & mm\\
+  Diameter             & Feature       & Continuous    & Perpendicular to length & mm  \\
+  Height               & Feature       & Continuous    & With meat in shell      & mm  \\
+  Whole\_weight         & Feature       & Continuous    & Whole abalone           & gram\\
+  Shucked\_weight       & Feature       & Continuous    & Weight of meat          & gram\\
+  Viscera\_weight       & Feature       & Continuous    & Gut weight (after bleeding) & \\
+  Shell\_weight         & Feature       & Continuous    & After being dried       & gram\\
+  Rings                & Target        & Integer       & +1.5 gives the age in years & - \\
+
    \bottomrule
   \end{tabular}
   \caption{Table of Variables}
   \label{table1}
   \end{table}
+
+We run BART from \cite{mccullochBARTBayesianAdditive2024}; Boosting from \cite{ridgewayGbmGeneralizedBoosted2024}; Random Forest and Bagging from \cite{breimanRandomForestBreimanCutlers2024}. We use half of the sample to fit $\hat{y}$, that is the Age variable, and half the sample to give us out of bag Mean Squared Errors (MSE) for predicting the same variable. Models are run for various values of T, and for each value, both the mean squared error (MSE) of out-of-sample predictions (shown in plot \ref{plot_mse}) and the computation time (depicted in plot \ref{plot_time}) are recorded.
+
 
 \begin{figure}
   \centering
@@ -168,7 +176,6 @@ We use data Abalone characteristics data coming from the UC Irvine Machine Learn
 \end{figure}
 
 
-  
 
 \newpage
 

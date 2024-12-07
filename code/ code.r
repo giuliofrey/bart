@@ -2,7 +2,7 @@
 packages <- c(
     "ggplot2", 
     "dplyr",
-    "MASS",
+    "tree",
     "BART",
     "gbm", # For Generalized Boosted Regression Models
     "randomForest", # For Random Forest,
@@ -19,6 +19,70 @@ invisible(lapply(packages, library, character.only = TRUE, warn.conflicts = FALS
 
 # Settting the seed
 set.seed(123)
+
+
+# simulate data from sin function
+x <- seq(0, 10, length.out = 1000)
+y <- 2*sin(x) + x + rnorm(1000, 0, 1)
+
+train <- sample(1:1000, 500)
+xtrain <- x[train]
+ytrain <- y[train]
+xtest <- x[-train]
+ytest <- y[-train]
+
+# fit a bart model
+bart_sin <- gbart(xtrain, ytrain, x.test = xtest)
+
+
+# plot the results using ggplot2
+plot_sin <- ggplot(data = data.frame(xtest, ytest), aes(x = xtest, y = ytest)) +
+  geom_point() +  
+  geom_line(aes(x = xtest, y = bart_sin$yhat.test.mean), color = "blue") +
+  geom_line(aes(x = xtest, y = 2*sin(xtest) + xtest), color = "green") +
+  labs(title = "BART vs. True Function",
+       x = "x",
+       y = "2sin(x)+x") +
+  theme_minimal()
+
+ggsave("outputs/sin_plot.pdf", plot_sin, width = 6, height = 4)
+
+
+
+plot_sigma <- ggplot(data = data.frame(samples = 1:1100, sigma = bart_sin$sigma), aes(x = samples, y = sigma)) +
+  geom_line() +
+  labs(title = "Estimated Sigma vs. Samples",
+       x = "Samples",
+       y = "Sigma") +
+  theme_minimal()
+
+ggsave("outputs/sigma_plot.pdf", plot_sigma, width = 6, height = 4)
+
+small <- sample(1:1000, 200)
+xsmall <- x[small]
+ysmall <- y[small]
+train_small <- sample(1:200, 100)
+xtrain_small <- xsmall[train_small]
+ytrain_small <- ysmall[train_small]
+xtest_small <- xsmall[-train_small]
+ytest_small <- ysmall[-train_small]
+
+bart_sig_s1 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 100)
+bart_sig_s2 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 20)
+bart_sig_s3 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 1)
+
+plot_diff_sigma <- ggplot(data = data.frame(xtest_small, ytest_small), aes(x = xtest_small, y = ytest_small)) +
+  geom_point() +  
+  geom_line(aes(x = xtest_small, y = bart_sig_s1$yhat.test.mean), color = "blue") +
+  geom_line(aes(x = xtest_small, y = bart_sig_s2$yhat.test.mean), color = "green") +
+  geom_line(aes(x = xtest_small, y = bart_sig_s3$yhat.test.mean), color = "red") +
+  labs(title = "BART with Different Sigma Estimates",
+       x = "x",
+       y = "2sin(x)+x") +
+  theme_minimal()
+
+ggsave("outputs/sin_plot_diff_sigma.pdf", plot_diff_sigma, width = 6, height = 4)
+
 
 #load the crab dataset
 abalone <- fetch_ucirepo(name = "Abalone")
@@ -43,6 +107,8 @@ ytrain <- y[train]
 xtest <- x[-train, ]
 ytest <- y[-train]
 
+
+# Evaluate models for a given number of trees
 
 evaluate_models <- function(ntree) {
   # Bayesian Additive Regression Trees
@@ -78,14 +144,22 @@ evaluate_models <- function(ntree) {
   ))
 }
 
-results <- data.frame()
+run_results <- FALSE
 
-for (ntree in c(10, 50, 100, 200, 500, 1000, 2000, 5000)) {
-  #suppress all output
-  results_run <- evaluate_models(ntree)
-  results_run$ntree <- ntree
-  results <- rbind(results, results_run)
-  print(paste("ntree:", ntree, "done", " in:", sum(results_run$time)))
+if (run_results) {
+  results <- data.frame()
+  
+  for (ntree in c(10, 50, 100, 200, 500, 1000, 2000, 5000)) {
+    #suppress all output
+    results_run <- evaluate_models(ntree)
+    results_run$ntree <- ntree
+    results <- rbind(results, results_run)
+    print(paste("ntree:", ntree, "done", " in:", sum(results_run$time)))
+  }
+  
+  write.csv(results, "outputs/abalone_results.csv")
 }
 
-write.csv(results, "code/abalone_results.csv")
+# simple regression tree
+tree_reg <- tree(Age ~ ., data = abalone_df[train, ])
+summary(tree_reg)
