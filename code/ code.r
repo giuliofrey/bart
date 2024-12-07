@@ -3,6 +3,7 @@ packages <- c(
     "ggplot2", 
     "dplyr",
     "tree",
+    "xtable",
     "BART",
     "gbm", # For Generalized Boosted Regression Models
     "randomForest", # For Random Forest,
@@ -143,6 +144,9 @@ evaluate_models <- function(ntree) {
     time = c(bart$time, rf$time, gbm$time, bag$time)
   ))
 }
+
+df_100 <- evaluate_models(1000)
+print(xtable(df_100), type = "latex", file = "outputs/results_100.tex")
 
 run_results <- FALSE
 
