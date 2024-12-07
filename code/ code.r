@@ -34,6 +34,9 @@ ytest <- y[-train]
 
 # fit a bart model
 bart_sin <- gbart(xtrain, ytrain, x.test = xtest)
+# fit a tree model
+tree_sin <- tree(ytrain ~ xtrain)
+print(summary(tree_sin))
 
 
 # plot the results using ggplot2
@@ -69,8 +72,8 @@ xtest_small <- xsmall[-train_small]
 ytest_small <- ysmall[-train_small]
 
 bart_sig_s1 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 100)
-bart_sig_s2 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 20)
-bart_sig_s3 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 1)
+bart_sig_s2 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 1)
+bart_sig_s3 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 0.001)
 
 plot_diff_sigma <- ggplot(data = data.frame(xtest_small, ytest_small), aes(x = xtest_small, y = ytest_small)) +
   geom_point() +  

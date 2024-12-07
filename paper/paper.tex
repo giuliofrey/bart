@@ -129,11 +129,54 @@ The number of sequential trees to fit, as chosen by the parameter $B$ in algorit
   
 \end{algorithm}
   
-\section{Data Application: Predicting the age of an Abalone}
+\section{Data Application}
+
+We now move to applications of the theoretical insights derived in the previous sections. Firstly, we will focus on simulated data, and then we will cover an application using real word data on abalones.
+
+\subsection{Simulated data}
+We simulate a dataframe with the following generating non-linear function:
+\begin{equation}
+  y = 2\sin(x)+x+Z \quad Z \sim \mathcal{N}(0,1)
+\end{equation}
+The dataframe is split in two smaller dataframes to obtain training and testing data.
+
+We first run a single decision tree on the simulated data and we obtain as a result 5 terminal nodes and a 
+residual mean deviance of 1.164. 
+
+We now fit a BART model with default parameters:  MCMC have 1100 iterations in total of which 100 are burn-in. We see from figure \ref{plot_sin1} that the BART model is able to fit correctly this non-linear trend.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{../outputs/sin_plot.pdf}
+  \caption{Plot of the estimates (blue) against observations (black) and generating function(green)}
+  \label{plot_sin1}
+\end{figure}
+
+To check convergence of the posterior, we plot in figure \ref{plot_sin2} the posterior draws of $\sigma$, the uniquely identified parameter. We observe that the MCMC draw converges quickly to the true parameter, although they oscillate with some autocorrelation due to the posterior sampling procedure.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{../outputs/sigma_plot.pdf}
+  \caption{Value of $\sigma$ over MCMC iterations}
+  \label{plot_sin2}
+\end{figure}
+
+
+To check robustness of BART to different prior specifications, we consider different values for the prior mean of $\sigma$,  that are 100, 0.001 and 1 (the true one). With a large $\sigma$, we observe in plot \ref{plot_sin3} underfitting of the data. With a small $\sigma$, holding all the other parameter constant, the regularization prior is still strong enough to avoid the overfitting.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{../outputs/sin_plot_diff_sigma.pdf}
+  \caption{DIfferent prior mean of $\sigma$}
+  \label{plot_sin3}
+\end{figure}
+
+
+\subsection{Predicting the age of an Abalone}
 
 Abalone are marine snails found in various regions around the world. Determining their age is a labor-intensive process, as it requires cutting through the shell, staining it, and then counting the growth rings under a microscope. However, predicting the age of an abalone can also be done by examining other physical characteristics of the individual, which are much easier to assess. This is precisely the motivation behind our application.
 
-We use data Abalone characteristics data coming from the UC Irvine Machine Learning Repository \parencite{warwicknashAbalone1994a}, that is described in table \ref{table1}. No data manipulation is necessary, aside from creating a new variable, \( \text{Age} = \text{Rings} + 1.5 \), and removing the Rings column.
+We use data abalone characteristics data coming from the UC Irvine Machine Learning Repository \parencite{warwicknashAbalone1994a}, that is described in table \ref{table1}. No data manipulation is necessary, aside from creating a new variable, \( \text{Age} = \text{Rings} + 1.5 \), and removing the column identifying the number of rings.
 
 \begin{table}[]
   \centering
@@ -158,7 +201,24 @@ We use data Abalone characteristics data coming from the UC Irvine Machine Learn
   \label{table1}
   \end{table}
 
-We run BART from \cite{mccullochBARTBayesianAdditive2024}; Boosting from \cite{ridgewayGbmGeneralizedBoosted2024}; Random Forest and Bagging from \cite{breimanRandomForestBreimanCutlers2024}. We use half of the sample to fit $\hat{y}$, that is the Age variable, and half the sample to give us out of bag Mean Squared Errors (MSE) for predicting the same variable. Models are run for various values of T, and for each value, both the mean squared error (MSE) of out-of-sample predictions (shown in plot \ref{plot_mse}) and the computation time (depicted in plot \ref{plot_time}) are recorded.
+We run BART from \cite{mccullochBARTBayesianAdditive2024}; Boosting from \cite{ridgewayGbmGeneralizedBoosted2024}; Random Forest and Bagging from \cite{breimanRandomForestBreimanCutlers2024}.Our aim is to compare the predictive performance of those methods. In fact,  we use half of the sample to fit $\hat{y}$, that is the age variable, and half the sample to give us out of bag Mean Squared Errors (MSE) for predicting the same variable. Models are run for various values of T, and for each value, both the mean squared error (MSE) of out-of-sample predictions (shown in plot \ref{plot_mse}) and the computation time (depicted in plot \ref{plot_time}) are recorded.
+
+We observe with a number of trees estimated larger than 500, the BART model is the best performing one, and it reaches also the best performance overall when run with 500 iterations. Although it is the best performer, it is also the model that takes the most to be run, and time of computations scales linearly with the number of trees that are fitted.
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{lcc}
+  \toprule
+  Model           & MSE & Time (s) \\
+  \midrule
+  BART            & 4.45    & 66.7  \\
+  Random Forest   & 4.53    & 4.74  \\
+  Boosting        & 4.87    & 0.220 \\
+  Bagging         & 4.54    & 12.4  \\
+  \bottomrule
+  \end{tabular}
+  \caption{Model performance with $T=500$}
+  \end{table}
 
 
 \begin{figure}
@@ -174,10 +234,6 @@ We run BART from \cite{mccullochBARTBayesianAdditive2024}; Boosting from \cite{r
   \caption{Time of computations for different values of T}
   \label{plot_time}
 \end{figure}
-
-
-
-\newpage
 
 \printbibliography
 
