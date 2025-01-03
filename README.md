@@ -6,9 +6,9 @@ This repository contains the code and the paper for the project "BART". This pro
 
 ## Authors
 
-- [Vincenzo Dorrello](https://github.com/vincenzodorrello)
+- [Vincenzo Dorrello](https://github.com/MarescialloLannes)
 - [Giulio Frey](https://github.com/giuliofrey)
-- [Guido Rossettini](https://github.com/guidorossettini)
+- [Guido Rossetti](https://github.com/g-rossetti)
 - [Giovanni Scarpato](https://github.com/giovanniscarpato)
 
 ## Abstract
