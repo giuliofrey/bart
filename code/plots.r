@@ -30,4 +30,5 @@ time_plot <-ggplot(data, aes(x = ntree, y = time, color = method)) +
 
 #save the plots
 ggsave("outputs/mse_plot.pdf", mse_plot, width = 6, height = 4)
+ggsave("outputs/mse_plot.png", mse_plot, width = 6, height = 4)
 ggsave("outputs/time_plot.pdf", time_plot, width = 6, height = 4)

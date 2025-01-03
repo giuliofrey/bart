@@ -1,6 +1,6 @@
 # BART Project
 
-![Mean Squared Error for different number of trees](outputs/mse_plot.pdf?raw=true)
+![Mean Squared Error for different number of trees](outputs/mse_plot.png)
 
 This repository contains the code and the paper for the project "BART". This project was part of the course "Bayesian Statistical Methods" at Bocconi University.
 
