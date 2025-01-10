@@ -2,7 +2,7 @@
 
 ![Mean Squared Error for different number of trees](outputs/mse_plot.png)
 
-This repository contains the code and the paper for the project "BART". This project was part of the course "Bayesian Statistical Methods" at Bocconi University.
+This repository contains the code and the paper for the project "BART: A Comparison with Frequentist Tree Methods". This project was part of the course "Bayesian Statistical Methods" at Bocconi University.
 
 ## Authors
 
@@ -13,23 +13,10 @@ This repository contains the code and the paper for the project "BART". This pro
 
 ## Abstract
 
-This paper provides a comprehensive comparison between Bayesian Additive Regression
-Trees (BART) and traditional non-Bayesian tree-based methods for regression problems.
-We begin by examining the theoretical foundations of decision trees and various ensemble
-methods, including bagging, random forests, and boosting. We then present BART as a
-Bayesian nonparametric approach that combines the flexibility of regression trees with the
-formal uncertainty quantification of Bayesian inference. The paper details BART’s probabil-
-ity model, its regularization prior, and the Bayesian backfitting MCMC algorithm used for
-posterior inference. Through both simulated and real-world data applications, we demon-
-strate BART’s effectiveness in capturing non-linear relationships and compare its predictive
-performance against other ensemble methods. Using the UCI Abalone dataset, we show
-that BART achieves superior prediction accuracy compared to random forests, boosting,
-and bagging when using sufficient numbers of trees, though at a higher computational cost.
-Our findings suggest that BART’s automatic prior-based regularization and ability to quan-
-tify uncertainty make it a valuable addition to the tree-based regression toolkit, particularly
-for complex non-linear modeling tasks.
+This paper provides a comparison between Bayesian Additive Regression Trees (BART) and traditional non-Bayesian tree-based methods for regression problems. We begin by examining the theoretical foundations of decision trees. We then turn to frequentist ensemble methods, including bagging, random forests, and boosting. Finally, we introduce BART, a Bayesian nonparametric approach that combines the flexibility of regression trees with the formal uncertainty quantification of Bayesian inference. The paper details BART's likelihood, regularization prior, and the Bayesian backfitting MCMC algorithm used for posterior inference. Our final section is a data application, in which we compare the predictive performance of BART against other ensemble methods through both simulated and real-world data. In particular, using the UCI Abalone dataset, we show that BART achieves superior prediction accuracy compared to random forests, boosting, and bagging when using sufficient numbers of trees, though at a higher computational cost. Overall, our findings suggest that BART's automatic prior-based regularization and ability to quantify uncertainty is particularly well suited for complex non-linear modeling tasks.
 
 ## Contents
 
 - `code/`: contains the code and the dataset used in the analysis
+- `outputs/`: contains the outputs of the code
 - `paper/`: contains the paper in PDF and TeX format
