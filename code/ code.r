@@ -18,7 +18,9 @@ if (any(installed_packages == FALSE)) {
 # Packages loading
 invisible(lapply(packages, library, character.only = TRUE, warn.conflicts = FALSE))
 
-# Settting the seed
+# Settting the Warning message:
+Continuous x aesthetic
+ℹ did you forget `aes(group = ...)`? seed
 set.seed(123)
 
 
@@ -38,16 +40,23 @@ bart_sin <- gbart(xtrain, ytrain, x.test = xtest)
 tree_sin <- tree(ytrain ~ xtrain)
 print(summary(tree_sin))
 
+plot_data <- data.frame(xtest, ytest, yhat_mean = bart_sin$yhat.test.mean)
+plot_data$true_function <- 2 * sin(xtest) + xtest
+plot_data$lower_quantile <- apply(bart_sin$yhat.test, 2, quantile, probs = 0.025)
+plot_data$upper_quantile <- apply(bart_sin$yhat.test, 2, quantile, probs = 0.975)
 
-# plot the results using ggplot2
-plot_sin <- ggplot(data = data.frame(xtest, ytest), aes(x = xtest, y = ytest)) +
-  geom_point() +  
-  geom_line(aes(x = xtest, y = bart_sin$yhat.test.mean), color = "blue") +
-  geom_line(aes(x = xtest, y = 2*sin(xtest) + xtest), color = "green") +
+plot_sin <- ggplot(plot_data, aes(x = xtest, y = ytest)) +
+  geom_point(aes(color = "Observed Data"), color = "black") +
+  geom_line(aes(y = yhat_mean, color = "BART Prediction")) +
+  geom_line(aes(y = true_function, color = "True Function"), linetype = "dashed") +
+  geom_ribbon(aes(ymin = lower_quantile, ymax = upper_quantile, fill = "95% CI"), alpha = 0.2) +
   labs(title = "BART vs. True Function",
        x = "x",
-       y = "2sin(x)+x") +
-  theme_minimal()
+       y = "2sin(x) + x",
+       color = "Legend",
+       fill = "Legend") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
 
 ggsave("outputs/sin_plot.pdf", plot_sin, width = 6, height = 4)
 
@@ -55,6 +64,7 @@ ggsave("outputs/sin_plot.pdf", plot_sin, width = 6, height = 4)
 
 plot_sigma <- ggplot(data = data.frame(samples = 1:1100, sigma = bart_sin$sigma), aes(x = samples, y = sigma)) +
   geom_line() +
+  geom_vline(xintercept = 100, color = "red", linetype = "solid", size = 1) +
   labs(title = "Estimated Sigma vs. Samples",
        x = "Samples",
        y = "Sigma") +
@@ -77,13 +87,15 @@ bart_sig_s3 <- gbart(xtrain_small, ytrain_small, x.test = xtest_small, sigest = 
 
 plot_diff_sigma <- ggplot(data = data.frame(xtest_small, ytest_small), aes(x = xtest_small, y = ytest_small)) +
   geom_point() +  
-  geom_line(aes(x = xtest_small, y = bart_sig_s1$yhat.test.mean), color = "blue") +
-  geom_line(aes(x = xtest_small, y = bart_sig_s2$yhat.test.mean), color = "green") +
-  geom_line(aes(x = xtest_small, y = bart_sig_s3$yhat.test.mean), color = "red") +
+  geom_line(aes(x = xtest_small, y = bart_sig_s1$yhat.test.mean, color = "Sigma = 100")) +
+  geom_line(aes(x = xtest_small, y = bart_sig_s2$yhat.test.mean, color = "Sigma = 1")) +
+  geom_line(aes(x = xtest_small, y = bart_sig_s3$yhat.test.mean, color = "Sigma = 0.001")) +
   labs(title = "BART with Different Sigma Estimates",
        x = "x",
-       y = "2sin(x)+x") +
-  theme_minimal()
+       y = "2sin(x)+x",
+       color = "Sigma Estimate") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
 
 ggsave("outputs/sin_plot_diff_sigma.pdf", plot_diff_sigma, width = 6, height = 4)
 
@@ -110,6 +122,31 @@ xtrain <- x[train, ]
 ytrain <- y[train]
 xtest <- x[-train, ]
 ytest <- y[-train]
+
+
+bart <- gbart(xtrain, ytrain, x.test = xtest, ntree = 500, mc.cores = 4)
+bart.mse <- mean((bart$yhat.test.mean - ytest)^2)
+
+ii <- order(bart$yhat.train.mean)
+
+plot_data <- data.frame(
+  ordered_obs = 1:length(ii),
+  posterior_mean = bart$yhat.train.mean[ii],
+  actual_y = ytrain[ii]
+)
+
+plot_posterior <- ggplot(plot_data, aes(x = ordered_obs)) +
+  geom_boxplot(aes(y = bart$yhat.train[, ii]), outlier.shape = NA) +
+  geom_point(aes(y = actual_y), color = "red", size = 0.5) +
+  labs(
+    title = "Posterior Predictions of BART Model on Training Data",
+    x = "Ordered Training Observations",
+    y = "Posterior Predictions"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+ggsave("outputs/posterior_predictions_plot.pdf", plot_posterior, width = 6, height = 4)
 
 
 # Evaluate models for a given number of trees
